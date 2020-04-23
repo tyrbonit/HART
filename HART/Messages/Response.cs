@@ -10,12 +10,12 @@ namespace HART.Messages
         /// <summary>
         /// Код отклика.
         /// </summary>
-        private byte[] _code = new byte[2];
+        public int ResponseCode { get; private set; }
 
         /// <summary>
         /// <see langword="true"/>, если устройство находится в пакетном режиме передачи данных.
         /// </summary>
-        public bool IsBatchMode { get; set; }
+        public bool IsBatchMode { get; private set; }
 
         /// <summary>
         /// Создать новое сообщение-ответ.
@@ -51,7 +51,7 @@ namespace HART.Messages
             var command = SetCommand(buffer, offset);
             offset += command.Length;
 
-            var counter = buffer[offset];
+            //var counter = buffer[offset];
             offset++;
 
             var code = SetCode(buffer, offset);
@@ -65,7 +65,7 @@ namespace HART.Messages
                 Limiter = limiter,
                 FrameFormat = frameFormat,
                 IsBatchMode = isBatchMode,
-                _code = code,
+                ResponseCode = Convert.FromByte<int>(code),
                 Data = data
             };
         }
@@ -189,13 +189,13 @@ namespace HART.Messages
             byte[] result;
 
             if (data[offset] == 254)
-                result = new byte[2]
+                result = new[]
                 {
                     data[offset],
                     data[offset + 1]
                 };
             else
-                result = new byte[1]
+                result = new[]
                 {
                     data[offset]
                 };
@@ -209,7 +209,7 @@ namespace HART.Messages
         /// <param name="data">Данные для десериализации.</param>
         /// <param name="offset">Смещение в массиве <paramref name="data"/>, с которого начинается чтение данных.</param>
         /// <returns></returns>
-        private static byte[] SetCode(byte[] data, int offset) => new byte[]
+        private static byte[] SetCode(byte[] data, int offset) => new[]
             {
                 data[offset],
                 data[offset + 1]
@@ -233,11 +233,5 @@ namespace HART.Messages
         }
 
         #endregion
-
-        /// <summary>
-        /// Получить код ошибки.
-        /// </summary>
-        /// <returns></returns>
-        public int GetErrorCode() => Convert.FromByte<int>(_code);
     }
 }
