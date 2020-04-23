@@ -13,6 +13,11 @@ namespace HART.Messages
         public int ResponseCode { get; private set; }
 
         /// <summary>
+        /// Описание ошибки связи.
+        /// </summary>
+        public string CommunicationError { get; private set; }
+
+        /// <summary>
         /// <see langword="true"/>, если устройство находится в пакетном режиме передачи данных.
         /// </summary>
         public bool IsBatchMode { get; private set; }
@@ -65,13 +70,14 @@ namespace HART.Messages
                 Limiter = limiter,
                 FrameFormat = frameFormat,
                 IsBatchMode = isBatchMode,
+                CommunicationError = CommunicationErrorList.GetErrorDescription(code[0]),
                 ResponseCode = Convert.FromByte<int>(code),
                 Data = data
             };
         }
 
         #region private
-
+        
         /// <summary>
         /// Получить количество символов в преамбуле.
         /// </summary>

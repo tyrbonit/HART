@@ -47,6 +47,7 @@
     <Compile Include="FrameFormats.cs" />
     <Compile Include="HartProtocol.cs" />
     <Compile Include="Convert.cs" />
+    <Compile Include="Messages\CommunicationErrorList.cs" />
     <Compile Include="Messages\MessageBase.cs" />
     <Compile Include="Messages\Request.cs" />
     <Compile Include="Messages\Response.cs" />
