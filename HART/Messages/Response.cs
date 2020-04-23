@@ -238,6 +238,6 @@ namespace HART.Messages
         /// Получить код ошибки.
         /// </summary>
         /// <returns></returns>
-        public byte[] GetErrorCode() => _code;
+        public int GetErrorCode() => Convert.FromByte<int>(_code);
     }
 }

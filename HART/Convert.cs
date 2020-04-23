@@ -52,7 +52,9 @@ namespace HART
         /// <item><see cref="string"/></item>
         /// <item><see cref="float"/></item>
         /// <item><see cref="double"/></item>
+        /// <item><see cref="short"/></item>
         /// <item><see cref="ushort"/></item>
+        /// <item><see cref="int"/></item>
         /// <item><see cref="uint"/></item>
         /// <item><see cref="DateTime"/></item>
         /// <item><see cref="BitArray"/></item>
@@ -74,7 +76,9 @@ namespace HART
                 case "Single": return (T)(object)FromByteToFloat(value);
                 case "Double": return (T)(object)FromByteToDouble(value);
                 case "UInt16": return (T)(object)FromByteToUInt16(value);
+                case "Int16": return (T)(object)FromByteToInt16(value);
                 case "UInt32": return (T)(object)FromByteToUInt32(value);
+                case "Int32": return (T)(object)FromByteToInt32(value);
                 case "DateTime": return (T)(object)FromByteToDate(value);
                 case "BitArray": return (T)(object)FromByteToBitArray(value);
 
@@ -140,6 +144,13 @@ namespace HART
         private static ushort FromByteToUInt16(byte[] value) => BitConverter.ToUInt16(value, 0);
 
         /// <summary>
+        /// Преобразовать массив байтов в <see cref="short"/>.
+        /// </summary>
+        /// <param name="value">Массив байтов для преобразования.</param>
+        /// <returns></returns>
+        private static short FromByteToInt16(byte[] value) => System.Convert.ToInt16(FromByteToUInt16(value));
+
+        /// <summary>
         /// Преобразовать <see cref="uint"/> в массив байтов.
         /// </summary>
         /// <param name="value">Данные для преобразования.</param>
@@ -147,7 +158,7 @@ namespace HART
         private static byte[] ToByte(uint value)
         {
             if (value > 16777215)
-                throw new ArgumentOutOfRangeException("Максимально допустимое значение равно 16777215");
+                throw new ArgumentOutOfRangeException(nameof(value),"Максимально допустимое значение равно 16777215");
 
             var b = BitConverter.GetBytes(value);
             var result = new byte[3];
@@ -172,6 +183,13 @@ namespace HART
         }
 
         /// <summary>
+        /// Преобразовать массив байтов в <see cref="int"/>.
+        /// </summary>
+        /// <param name="value">Массив байтов для преобразования.</param>
+        /// <returns></returns>
+        private static int FromByteToInt32(byte[] value) => System.Convert.ToInt32(FromByteToUInt32(value));
+
+        /// <summary>
         /// Преобразовать <see cref="DateTime"/> в массив байтов.
         /// </summary>
         /// <param name="value">Данные для преобразования.</param>
@@ -182,7 +200,7 @@ namespace HART
             var bMonth = BitConverter.GetBytes(value.Month);
             var bYear = BitConverter.GetBytes(value.Year - 1900);
 
-            return new byte[] { bDay[0], bMonth[0], bYear[0] };
+            return new[] { bDay[0], bMonth[0], bYear[0] };
         }
 
         /// <summary>
@@ -207,7 +225,7 @@ namespace HART
         private static byte[] ToByte(BitArray value)
         {
             if (value.Count > 8)
-                throw new ArgumentOutOfRangeException("Переполнение массива значение. Допускается только 8 элементов в массиве.");
+                throw new ArgumentOutOfRangeException(nameof(value), "Переполнение массива значение. Допускается только 8 элементов в массиве.");
 
             var result = new byte[1];
 
@@ -224,7 +242,7 @@ namespace HART
         private static BitArray FromByteToBitArray(byte[] value)
         {
             if (value.Length > 1)
-                throw new ArgumentOutOfRangeException("Переполнение массива значение. Допускается только 1 байт данных.");
+                throw new ArgumentOutOfRangeException(nameof(value), "Переполнение массива значение. Допускается только 1 байт данных.");
 
             return new BitArray(value);
         }
