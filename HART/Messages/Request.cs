@@ -48,7 +48,7 @@ namespace HART.Messages
         /// Создать запрос для передачи адресу в формате длинного фрейма.
         /// </summary>
         /// <param name="isSecondaryMaster"><see langword="true"/>, если запрос передает вторичный мастер.</param>
-        /// <param name="manufacturerId">ID производитель.</param>
+        /// <param name="manufacturerId">HART ID производителя.</param>
         /// <param name="deviceTypeCode">Код типа устройства.</param>
         /// <param name="deviceSerialNumber">Серийный номер устройства.</param>
         public Request(
