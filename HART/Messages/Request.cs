@@ -96,10 +96,10 @@ namespace HART.Messages
             address.CopyTo(result, index += limiter.Length);
             command.CopyTo(result, index += address.Length);
             data?.CopyTo(result, index += command.Length);
-            byteCounter.CopyTo(result, index += data != null ? data.Length : command.Length);
+            byteCounter.CopyTo(result, index += data?.Length ?? command.Length);
 
             var checkSum = GetCheckSum(result);
-            checkSum.CopyTo(result, index += byteCounter.Length);
+            checkSum.CopyTo(result, index + byteCounter.Length);
 
             return result;
         }
@@ -128,7 +128,7 @@ namespace HART.Messages
         private byte[] GetLimiter()
         {
             Limiter = FrameFormat == FrameFormats.Short ? (byte)0x2 : (byte)0x82;
-            return new byte[] { Limiter };
+            return new[] { Limiter };
         }
 
         /// <summary>
@@ -140,12 +140,13 @@ namespace HART.Messages
         /// <summary>
         /// Преобразовать адрес устройства в массив байтов.
         /// </summary>
+        /// <param name="isSecondaryMaster"><see langword="true"/>, если данное master-устройство вторичное.</param>
         /// <param name="deviceAddress">Адрес устройства.</param>
         /// <returns>Адрес устройства в виде массива байтов.</returns>
         private static byte[] SetAddress(bool isSecondaryMaster, int deviceAddress)
         {
             if (deviceAddress < 0 || deviceAddress > 15)
-                throw new ArgumentOutOfRangeException("В формате короткого кадра адрес прибора должен быть в диапазоне 0..15");
+                throw new ArgumentOutOfRangeException(nameof(deviceAddress),"В формате короткого кадра адрес прибора должен быть в диапазоне 0..15");
 
             var address = new BitArray(8);
             var bDeviceAddress = new BitArray(BitConverter.GetBytes(deviceAddress));
@@ -165,6 +166,7 @@ namespace HART.Messages
         /// Преобразовать адрес устройства в массив байтов.
         /// <para>Только для длинного формата кадра (<see cref="FrameFormats.Long"/>).</para>
         /// </summary>
+        /// <param name="isSecondaryMaster"><see langword="true"/>, если данное master-устройство вторичное.</param>
         /// <param name="manufacturerId">ID производитель.</param>
         /// <param name="deviceTypeCode">Код типа устройства.</param>
         /// <param name="deviceSerialNumber">Серийный номер устройства.</param>
@@ -209,7 +211,7 @@ namespace HART.Messages
         private byte[] GetCommand()
         {
             if (Command < 0 || Command > 65534)
-                throw new ArgumentOutOfRangeException("Номер команды должен быть в диапазоне 0..65534");
+                throw new ArgumentOutOfRangeException(nameof(Command),"Номер команды должен быть в диапазоне 0..65534");
 
             byte[] result;
             var bCommand = BitConverter.GetBytes(Command);
@@ -241,7 +243,7 @@ namespace HART.Messages
             if (data != null)
                 result = BitConverter.GetBytes(data.Length);
 
-            return new byte[] { result[0] };
+            return new[] { result[0] };
         }
 
         /// <summary>
